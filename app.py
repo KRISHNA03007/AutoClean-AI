@@ -2,7 +2,7 @@ import streamlit as st
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(
-    page_title="AutoClean AI",
+    page_title="Analytix AI",
     layout="wide"
 )
 
@@ -152,7 +152,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -------------------- TITLE --------------------
-st.markdown('<h1 class="main-title">AutoClean AI</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-title">Analytix AI</h1>', unsafe_allow_html=True)
 
 # -------------------- DESCRIPTION --------------------
 st.markdown(

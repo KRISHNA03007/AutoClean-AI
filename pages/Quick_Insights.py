@@ -43,6 +43,17 @@ with col3:  # Move to extreme right
         st.session_state.df = None
         st.switch_page("app.py")
 
+# Red background with white text for HOME button
+st.markdown("""
+<style>
+div.stButton > button {
+    background-color: #ff6b6b !important;
+    color: white !important;
+    font-weight: 700 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Dark + Bold Styling for HOME button
 st.markdown("""
 <style>
