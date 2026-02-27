@@ -1,55 +1,14 @@
 import streamlit as st
-import pandas as pd
+import pandas as  pd
 import numpy as np
 from scipy.stats import skew
 from sklearn.preprocessing import PowerTransformer
 from io import BytesIO
 
-st.set_page_config(page_title="Clean Data", layout="wide")
+# -------------------- PAGE CONFIG --------------------
+st.set_page_config(page_title="Clean Data - AutoClean AI", layout="wide")
 
-# ============================================================
-# HOME BUTTON (TOP RIGHT) - CHANGED TO RIGHT SIDE
-# ============================================================
-col1, col2, col_home = st.columns([8, 1, 1])  # Changed column ratios to push button to right
-
-with col_home:
-    if st.button("HOME", use_container_width=True, key="home_btn"):
-        st.switch_page("app.py")
-
-# Button Styling
-st.markdown("""
-<style>
-div.stButton > button {
-    background-color: #ff6b6b !important;
-    color: white !important;
-    font-weight: 700 !important;
-}
-
-.custom-table {
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-.custom-table th, .custom-table td {
-    border: 2px solid black !important;
-    text-align: center !important;
-    padding: 6px;
-}
-.custom-table th {
-    font-weight: 800;
-    background-color: #f2f2f2;
-    color: black;
-}
-</style>
-""", unsafe_allow_html=True)
-
-st.title("Clean Data")
-
-# ============================================================
-# SESSION STATE
-# ============================================================
+# -------------------- SESSION STATE --------------------
 if "original_df" not in st.session_state:
     st.session_state.original_df = None
 
@@ -59,6 +18,62 @@ if "cleaned_df" not in st.session_state:
 # Add a version counter to force UI updates
 if "update_counter" not in st.session_state:
     st.session_state.update_counter = 0
+
+# -------------------- CUSTOM CSS --------------------
+st.markdown("""
+<style>
+.section-title { font-size:2rem; text-align:center; color:#ff6b6b; font-weight:700; margin:20px 0 10px 0; }
+.dataframe { width:100%; border:2px solid #000; border-collapse:collapse; margin:10px 0; font-size:1.1rem; }
+.dataframe th, .dataframe td { border:2px solid #000 !important; text-align:center; padding:8px; font-size:1.1rem; }
+.dataframe th { font-weight:700; background:#f0f0f0; }
+.stApp { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
+
+/* Custom table styling */
+.custom-table {
+    width: 100%;
+    border: 2px solid #000 !important;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 1.1rem;
+}
+.custom-table th, .custom-table td {
+    border: 2px solid #000 !important;
+    text-align: center !important;
+    padding: 8px;
+    font-size: 1.1rem;
+}
+.custom-table th {
+    font-weight: 700;
+    background-color: #f0f0f0;
+}
+
+div.stButton > button {
+    background-color: #ff6b6b !important;
+    color: white !important;
+    font-weight: 700 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# -------------------- BUTTONS LAYOUT --------------------
+col1, col2, col3 = st.columns([8,1,1])
+
+with col3:  # Move to extreme right
+    if st.button("HOME", use_container_width=True, key="home_btn"):
+        st.switch_page("app.py")
+
+# Dark + Bold Styling for HOME button
+st.markdown("""
+<style>
+div.stButton > button {
+    font-weight: 800 !important;
+    color: #000000 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# -------------------- HEADER --------------------
+st.markdown('<h1 class="section-title">Clean Data</h1>', unsafe_allow_html=True)
 
 # ============================================================
 # FILE UPLOAD (FIXED — LOADS ONLY ONCE)
@@ -94,7 +109,7 @@ if st.session_state.cleaned_df is not None:
     df = st.session_state.cleaned_df
 
     # ---------------- Columns & Dtypes ----------------
-    st.subheader("Columns and Data Types")
+    st.markdown('<h2 class="section-title">Columns and Data Types</h2>', unsafe_allow_html=True)
 
     col_info = pd.DataFrame({
         "Column Name": df.columns,
@@ -105,7 +120,7 @@ if st.session_state.cleaned_df is not None:
                 unsafe_allow_html=True)
 
     # ---------------- Missing & Skewness ----------------
-    st.subheader("Missing Values and Skewness")
+    st.markdown('<h2 class="section-title">Missing Values and Skewness</h2>', unsafe_allow_html=True)
 
     missing = df.isnull().sum()
     numeric_cols = df.select_dtypes(include=np.number).columns
@@ -127,14 +142,14 @@ if st.session_state.cleaned_df is not None:
                 unsafe_allow_html=True)
 
     # ---------------- Duplicates ----------------
-    st.subheader("Duplicate Records")
+    st.markdown('<h2 class="section-title">Duplicate Records</h2>', unsafe_allow_html=True)
     duplicate_count = df.duplicated().sum()
-    st.write(f"Total Duplicate Rows: {duplicate_count}")
+    st.markdown(f"<h3 style='font-size: 24px; margin: 10px 0; font-weight: 600;'>Total Duplicate Rows: {duplicate_count}</h3>", unsafe_allow_html=True)
 
     # ============================================================
     # COLUMN OPERATIONS
     # ============================================================
-    st.subheader("Column Operations")
+    st.markdown('<h2 class="section-title">Column Operations</h2>', unsafe_allow_html=True)
 
     # Use a unique key that depends on update_counter to force refresh
     col_to_drop = st.selectbox("Select Column to Drop", df.columns, 
@@ -154,7 +169,7 @@ if st.session_state.cleaned_df is not None:
             st.rerun()
 
     # ---------------- Rename Column ----------------
-    st.subheader("Rename Column")
+    st.markdown('<h2 class="section-title">Rename Column</h2>', unsafe_allow_html=True)
 
     col_to_rename = st.selectbox("Select Column", df.columns, 
                                  key=f"rename_col_{st.session_state.update_counter}")
@@ -175,7 +190,7 @@ if st.session_state.cleaned_df is not None:
             st.rerun()
 
     # ---------------- Change Data Type ----------------
-    st.subheader("Change Data Type")
+    st.markdown('<h2 class="section-title">Change Data Type</h2>', unsafe_allow_html=True)
 
     col_dtype = st.selectbox("Select Column", df.columns, 
                              key=f"dtype_col_{st.session_state.update_counter}")
@@ -201,7 +216,7 @@ if st.session_state.cleaned_df is not None:
     # ============================================================
     # HANDLE MISSING VALUES
     # ============================================================
-    st.subheader("Handle Missing Values")
+    st.markdown('<h2 class="section-title">Handle Missing Values</h2>', unsafe_allow_html=True)
 
     selected_col = st.selectbox("Select Column", df.columns, 
                                 key=f"missing_col_{st.session_state.update_counter}")
@@ -254,7 +269,7 @@ if st.session_state.cleaned_df is not None:
     # ============================================================
     # HANDLE DUPLICATES
     # ============================================================
-    st.subheader("Handle Duplicates")
+    st.markdown('<h2 class="section-title">Handle Duplicates</h2>', unsafe_allow_html=True)
 
     c9, c10, _ = st.columns([1,1,6])
     with c9:
@@ -272,7 +287,7 @@ if st.session_state.cleaned_df is not None:
     # ============================================================
     # SKEWNESS TRANSFORMATION
     # ============================================================
-    st.subheader("Skewness Transformation")
+    st.markdown('<h2 class="section-title">Skewness Transformation</h2>', unsafe_allow_html=True)
 
     numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
 
@@ -311,7 +326,7 @@ if st.session_state.cleaned_df is not None:
     # ============================================================
     # PREVIEW
     # ============================================================
-    st.subheader("Cleaned Dataset Preview")
+    st.markdown('<h2 class="section-title">Cleaned Dataset Preview</h2>', unsafe_allow_html=True)
 
     preview_df = st.session_state.cleaned_df.head()
     st.markdown(preview_df.to_html(index=False, classes="custom-table"),
@@ -320,7 +335,7 @@ if st.session_state.cleaned_df is not None:
     # ============================================================
     # DOWNLOAD
     # ============================================================
-    st.subheader("Download Cleaned Dataset")
+    st.markdown('<h2 class="section-title">Download Cleaned Dataset</h2>', unsafe_allow_html=True)
 
     download_format = st.selectbox("Select Format",
                                    ["CSV", "Excel", "Parquet"],
